@@ -70,38 +70,59 @@ def chooseBoxes():
     print(Fore.CYAN + "[==Choose quantity of boxes (2-6)==]" + Fore.RESET)
     boxQuantity = int(input("Enter your choice: "))
     if boxQuantity >= 2 and boxQuantity <= 6:
-        lucky_game(boxQuantity)
+        luckyGame(boxQuantity)
     else:
         print(Fore.RED + "Invalid choice. Please try again." + Fore.RESET)
         return chooseBoxes()
     
 
 def options():
+    global autoplay, displayFacts
     print("-------------------------------------")
     print(Fore.LIGHTBLUE_EX + "[== SETTINGS ==]" + Fore.RESET)
     print("")
-    print("1. Enable" + Fore.LIGHTMAGENTA_EX + " Autoplay " + Fore.RESET + "(RANDOM)")
-    print("2. " + Fore.LIGHTRED_EX + "Disable" + Fore.RESET + " Fact Display")
+    if autoplay == False:
+        print("1. Enable" + Fore.LIGHTMAGENTA_EX + " Autoplay " + Fore.RESET + "(RANDOM)")
+    else:
+        print("1. Disable" + Fore.LIGHTRED_EX + " Autoplay " + Fore.RESET + "(RANDOM)")
+
+    if displayFacts == True:
+        print("2. " + Fore.LIGHTRED_EX + "Disable" + Fore.RESET + " Fact Display")
+    else:
+        print("2. " + Fore.LIGHTMAGENTA_EX + "Enable" + Fore.RESET + " Fact Display")
 
     choice = int(input(Fore.BLUE + "Enter your choice: " + Fore.RESET))
     if choice == 1:
-        autoplay == False
-        menu()
+        if autoplay == False:
+            autoplay = True
+            print(Fore.GREEN + "Autoplay enabled." + Fore.RESET)
+            menu()
+        else:
+            autoplay = False
+            print(Fore.GREEN + "Autoplay disabled." + Fore.RESET)
+            menu()
     elif choice == 2:
-        displayFacts == False
-        menu()
+        if displayFacts == True:
+            displayFacts = False
+            print(Fore.GREEN + "Fact display disabled." + Fore.RESET)
+            menu()
+        else:
+            displayFacts = True
+            print(Fore.GREEN + "Fact display enabled." + Fore.RESET)
+            menu()
     else:
         print(Fore.RED + "Invalid choice. Please try again." + Fore.RESET)
         options()
 
 
+def autoplayer():
+    pass
+
 def checkForLuckFacts(probability_in_x):
     try:
-        # Open and load the JSON file directly
         with open('facts.json', 'r') as f:
             facts = json.load(f)
 
-        # Check if the probability exists in the facts
         if str(probability_in_x) in facts:
             print(Fore.MAGENTA + "FACT: Your luck was equivalent to -> " + Fore.RESET + Fore.CYAN + facts[str(probability_in_x)] + Fore.RESET)
         else:
@@ -111,8 +132,8 @@ def checkForLuckFacts(probability_in_x):
     except json.JSONDecodeError:
         print(Fore.RED + "Error: 'facts.json' contains invalid JSON." + Fore.RESET)
 
-def lucky_game(boxInt):
-    level = 1
+def luckyGame(boxInt):
+    level = 120
 
     boxes = ""
     for i in range(1, boxInt + 1):
@@ -145,11 +166,11 @@ def lucky_game(boxInt):
             print("-------------------------------------")
             print("""
             """)
-            lucky_game(boxInt)
+            luckyGame(boxInt)
             
         else:
             print(Fore.RED + "Invalid choice. Please try again." + Fore.RESET)
-            lucky_game(boxInt)
+            luckyGame(boxInt)
 
 colorama.init()
 menu()
