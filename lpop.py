@@ -151,4 +151,5 @@ def lucky_game(boxInt):
             print(Fore.RED + "Invalid choice. Please try again." + Fore.RESET)
             lucky_game(boxInt)
 
+colorama.init()
 menu()
