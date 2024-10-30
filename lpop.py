@@ -1,6 +1,7 @@
 import json
 import random
 import colorama
+import time
 from colorama import *
 
 autoplay = False
@@ -91,6 +92,8 @@ def options():
     else:
         print("2. " + Fore.LIGHTMAGENTA_EX + "Enable" + Fore.RESET + " Fact Display")
 
+    print("3. Type" + Fore.CYAN + " 0 " + Fore.RESET + "to exit options menu...")
+
     choice = int(input(Fore.BLUE + "Enter your choice: " + Fore.RESET))
     if choice == 1:
         if autoplay == False:
@@ -110,13 +113,17 @@ def options():
             displayFacts = True
             print(Fore.GREEN + "Fact display enabled." + Fore.RESET)
             menu()
+    elif choice == 3:
+        menu()
     else:
         print(Fore.RED + "Invalid choice. Please try again." + Fore.RESET)
         options()
 
 
-def autoplayer():
-    pass
+def autoplayer(boxInt):
+    guess = random.randint(1, boxInt)
+    time.sleep(2)
+    return guess
 
 def checkForLuckFacts(probability_in_x):
     try:
@@ -133,7 +140,7 @@ def checkForLuckFacts(probability_in_x):
         print(Fore.RED + "Error: 'facts.json' contains invalid JSON." + Fore.RESET)
 
 def luckyGame(boxInt):
-    level = 120
+    level = 1
 
     boxes = ""
     for i in range(1, boxInt + 1):
@@ -143,7 +150,11 @@ def luckyGame(boxInt):
         print(Fore.YELLOW + f"\nLevel {level}: " + Fore.RESET + "Choose a box " + boxes + ".")
         
         true_box = random.randint(1, boxInt)
-        guess = int(input(Fore.BLUE + "Your choice: " + Fore.RESET))
+
+        if autoplay == True:
+            guess = autoplayer(boxInt)
+        else:
+            guess = int(input(Fore.BLUE + "Your choice: " + Fore.RESET))
         
         if guess == true_box:
             print(Fore.GREEN + "You got lucky! Advancing to the next level." + Fore.RESET)
