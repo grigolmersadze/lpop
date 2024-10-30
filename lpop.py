@@ -2,12 +2,15 @@ import json
 import random
 import colorama
 import time
+import os
 from colorama import *
 
 autoplay = False
 displayFacts = True
 
 def menu():
+    score = displayScore()
+
     print(Fore.RED + r"""
 .____   __________________ __________ 
 |    |  \______   \_____  \\______   \
@@ -16,7 +19,7 @@ def menu():
 |_______ \____|   \_______  /____|    
         \/                \/          
 """ + Fore.RESET)
-    print(Fore.YELLOW + "LUCKIEST PERSON ON PLANET GAME - LPOP" + Fore.RESET + Fore.CYAN + " [Highest Score: 0]" + Fore.RESET)
+    print(Fore.YELLOW + "LUCKIEST PERSON ON PLANET GAME - LPOP" + Fore.RESET + Fore.CYAN + " [Highest Score: " + str(score) + "]" + Fore.RESET)
     print("-------------------------------------")
     print("1. PLAY")
     print("2. HOW TO PLAY")
@@ -131,7 +134,7 @@ def checkForLuckFacts(probability_in_x):
             facts = json.load(f)
 
         if str(probability_in_x) in facts:
-            print(Fore.MAGENTA + "FACT: Your luck was equivalent to -> " + Fore.RESET + Fore.CYAN + facts[str(probability_in_x)] + Fore.RESET)
+            print(Fore.LIGHTMAGENTA_EX + "FACT: Your luck was equivalent to -> " + Fore.RESET + Fore.CYAN + facts[str(probability_in_x)] + Fore.RESET)
         else:
             print("No facts found for this probability.")
     except FileNotFoundError:
@@ -147,17 +150,17 @@ def luckyGame(boxInt):
         boxes += str(f"[{i}]")
 
     while True:
-        print(Fore.YELLOW + f"\nLevel {level}: " + Fore.RESET + "Choose a box " + boxes + ".")
+        print(Fore.LIGHTYELLOW_EX + f"\nLevel {level}: " + Fore.RESET + "Choose a box " + boxes + ".")
         
         true_box = random.randint(1, boxInt)
 
         if autoplay == True:
             guess = autoplayer(boxInt)
         else:
-            guess = int(input(Fore.BLUE + "Your choice: " + Fore.RESET))
+            guess = int(input(Fore.LIGHTBLUE_EX + "Your choice: " + Fore.RESET))
         
         if guess == true_box:
-            print(Fore.GREEN + "You got lucky! Advancing to the next level." + Fore.RESET)
+            print(Fore.LIGHTGREEN_EX + "You got lucky! Advancing to the next level." + Fore.RESET)
             level += 1
         elif guess == 0:
             menu()
@@ -171,6 +174,7 @@ def luckyGame(boxInt):
 
             print(Fore.RED + f"\nYou lost at level {level}." + Fore.RESET)
             print(f"Your luck was equivalent to 1 in {probability_in_x}.")
+            checkScore(probability_in_x)
 
             if displayFacts == True:
                 checkForLuckFacts(probability_in_x)
@@ -182,6 +186,36 @@ def luckyGame(boxInt):
         else:
             print(Fore.RED + "Invalid choice. Please try again." + Fore.RESET)
             luckyGame(boxInt)
+
+
+# High Score Handling
+
+def updateScore(score):
+    print(Fore.LIGHTGREEN_EX + "Saving new high score..." + Fore.RESET)
+    with open("score.txt", "w") as file:
+        file.write(str(score))
+
+def displayScore():
+    if not os.path.exists("score.txt") or os.stat("score.txt").st_size == 0:
+        return 0
+    with open("score.txt", "r") as file:
+        score = int(file.read())
+        return score
+
+def checkScore(currentScore):
+    if os.path.exists("score.txt") and os.stat("score.txt").st_size > 0:
+        with open("score.txt", "r") as file:
+            try:
+                score = int(file.read())
+            except ValueError:
+                print("Error: Score in the file is not an integer. Resetting to 0.")
+                score = 0
+    else:
+        score = 0
+
+    if score < currentScore:
+        updateScore(currentScore)
+
 
 colorama.init()
 menu()
